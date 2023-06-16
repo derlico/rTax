@@ -19,6 +19,8 @@ from user_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('products/', views.product_list),
-    path('products/<int:id>', views.product_detail),
+    path('api/products/', views.product_list),
+    path('api/products/<int:id>', views.product_detail),
+    path('api/customers/', views.customer_list),
+    path('api/customers/<int:id>', views.customer_detail),
 ]
