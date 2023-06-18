@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Create your views here.
-#decorater
-@api_view(['GET', 'POST'])
+
+#PRODUCT VIEWS
+@api_view(['GET', 'POST']) #decorater
 def product_list(request):
     
     if request.method == 'GET':
@@ -52,13 +53,58 @@ def product_detail(request, id):
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-    #customers
+
+#CUSTOMER VIEWS
 @api_view(['GET', 'POST'])
 def customer_list(request):
     
     if request.method == 'GET':
         #get all products
         customers = Customer.objects.all()
+        #serailize the products
+        serializer = CustomerSerializer(customers, many=True)
+        return Response(serializer.data)
+        #return json list
+        #return JsonResponse(serializer.data, safe=False)
+        #return json dictionary
+        #return JsonResponse({"products": serializer.data})
+    
+    if request.method == 'POST':
+        serializer = CustomerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def customer_detail(request, id):
+    
+    #searching if valid product
+    try:
+        customer = Customer.objects.get(pk=id)
+    except Customer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    #defining endpoint menthods based on request type
+    if request.method == 'GET':
+        serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = CustomerSerializer(customer, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        customer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+#SALES VIEWS
+@api_view(['GET', 'POST'])
+def sales_list(request):
+    
+    if request.method == 'GET':
+        #get all products
+        customers = Sales.objects.all()
         #serailize the products
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)

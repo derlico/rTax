@@ -23,7 +23,7 @@ CUSTOMER_GROUP_OPTIONS = (
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    barcode = models.CharField(max_length=60, unique=True)
+    barcode = models.CharField(max_length=60, unique=True, null=True)
     cost = models.CharField(max_length=50)
     price = models.CharField(max_length=50)
     tax = models.CharField(
@@ -49,3 +49,11 @@ class Customer(models.Model):
     
     def __str__(self):
         return self.name + ": "+ self.phone
+
+class Sale(models.Model):
+    #customer = models.ForeignKey(Customer.name, on_delete=models.SET_NULL, null=True)
+    sale_total = models.CharField(max_length=60)
+    #date_added = models.DateTimeField(datetime.datetime.now())
+    
+    def __str__(self):
+        return ": Ksh "+ self.sale_total
