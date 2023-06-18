@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Product, Customer
-from .serializers import ProductSerializer, CustomerSerializer
+from .models import *
+from .serializers import ProductSerializer, CustomerSerializer, SaleSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -104,9 +104,9 @@ def sales_list(request):
     
     if request.method == 'GET':
         #get all products
-        customers = Sales.objects.all()
+        sales = Sale.objects.all()
         #serailize the products
-        serializer = CustomerSerializer(customers, many=True)
+        serializer = SaleSerializer(sales, many=True)
         return Response(serializer.data)
         #return json list
         #return JsonResponse(serializer.data, safe=False)
@@ -114,30 +114,30 @@ def sales_list(request):
         #return JsonResponse({"products": serializer.data})
     
     if request.method == 'POST':
-        serializer = CustomerSerializer(data=request.data)
+        serializer = SaleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def customer_detail(request, id):
+def sale_detail(request, id):
     
     #searching if valid product
     try:
-        customer = Customer.objects.get(pk=id)
-    except Customer.DoesNotExist:
+        sale = Sale.objects.get(pk=id)
+    except Sale.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     #defining endpoint menthods based on request type
     if request.method == 'GET':
-        serializer = CustomerSerializer(customer)
+        serializer = SaleSerializer(sale)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = CustomerSerializer(customer, data=request.data)
+        serializer = SaleSerializer(sale, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
-        customer.delete()
+        sale.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
