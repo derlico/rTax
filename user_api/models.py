@@ -20,10 +20,16 @@ CUSTOMER_GROUP_OPTIONS = (
     ('2', 'Hybrid Customers'),
 )
 
+PAYMENT_METHODS = (
+    ('0', 'Cash'),
+    ('1', 'Mpesa'),
+    ('2', 'Bank'),
+    ('3', 'Other')
+)
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    barcode = models.CharField(max_length=60, unique=True, null=True)
+    barcode = models.CharField(max_length=60, null=True)
     cost = models.CharField(max_length=50)
     price = models.CharField(max_length=50)
     tax = models.CharField(
@@ -39,6 +45,7 @@ class Product(models.Model):
 class Customer(models.Model):
     name = models.CharField(max_length=200)
     phone = models.CharField(max_length=60)
+    email = models.CharField(max_length=200, null=True)
     group = models.CharField(
           max_length=20,
           choices=CUSTOMER_GROUP_OPTIONS,
@@ -48,12 +55,26 @@ class Customer(models.Model):
     #date_added = models.DateTimeField(datetime.datetime.now())
     
     def __str__(self):
-        return self.name + ": "+ self.phone
+        return self.name + ": " + self.phone
 
 class Sale(models.Model):
-    #customer = models.ForeignKey(Customer.name, on_delete=models.SET_NULL, null=True)
+    products = models.ManyToManyField(Product)
+    customer = models.OneToOneField(Customer, on_delete=models.SET_NULL, null=True)
     sale_total = models.CharField(max_length=60)
+    sale_tax = models.CharField(max_length=60)
     #date_added = models.DateTimeField(datetime.datetime.now())
     
     def __str__(self):
-        return ": Ksh "+ self.sale_total
+        return "Sale Value- Ksh "+ self.sale_total
+
+class Payment(models.Model):
+    payment_type = models.CharField(
+          max_length=50,
+          choices=PAYMENT_METHODS,
+          default = 'Cash',
+    )
+    payment_total = models.CharField(max_length=60)
+    payment_name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.payment_name + "- Ksh "+ self.payment_total

@@ -8,5 +8,6 @@ urlpatterns = [
     path('customers/<int:id>', views.customer_detail),
     path('sales/', views.sales_list),
     path('sales/<int:id>', views.sale_detail),
-    
+    path('payments/', views.payments_list),
+    #path('', views.api),
 ]

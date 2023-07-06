@@ -14,5 +14,10 @@ class CustomerSerializer(serializers.ModelSerializer):
 class SaleSerializer(serializers.ModelSerializer):
      class Meta:
          model = Sale
-         fields = ['id', 'sale_total']
+         fields = ['id', 'customer', 'sale_total', 'products']
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['id', 'payment_type', 'payment_total', 'payment_name']
          

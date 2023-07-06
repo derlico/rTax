@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import *
-from .serializers import ProductSerializer, CustomerSerializer, SaleSerializer
+from .serializers import ProductSerializer, CustomerSerializer, SaleSerializer, PaymentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,7 +26,6 @@ def product_list(request):
     if request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
-            Product.validate_unique()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -103,15 +102,9 @@ def customer_detail(request, id):
 def sales_list(request):
     
     if request.method == 'GET':
-        #get all products
         sales = Sale.objects.all()
-        #serailize the products
         serializer = SaleSerializer(sales, many=True)
         return Response(serializer.data)
-        #return json list
-        #return JsonResponse(serializer.data, safe=False)
-        #return json dictionary
-        #return JsonResponse({"products": serializer.data})
     
     if request.method == 'POST':
         serializer = SaleSerializer(data=request.data)
@@ -141,3 +134,16 @@ def sale_detail(request, id):
     elif request.method == 'DELETE':
         sale.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET', 'POST'])
+def payments_list(request):
+    if request.method == 'GET':
+        sales = Payment.objects.all()
+        serializer = PaymentSerializer(sales, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        serializer = PaymentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
