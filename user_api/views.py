@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import *
-from .serializers import ProductSerializer, CustomerSerializer, SaleSerializer, PaymentSerializer
+from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,7 +17,7 @@ def product_list(request):
         products = Product.objects.all()
         #serailize the products
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         #return json list
         #return JsonResponse(serializer.data, safe=False)
         #return json dictionary
@@ -52,6 +52,21 @@ def product_detail(request, id):
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+
+#STOCK VIEWS
+@api_view(['GET', 'POST'])
+def stocks_list(request):
+    
+    if request.method == 'GET':
+        stocks = Stock.objects.all()
+        serializer = StockSerializer(stocks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = StockSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 #CUSTOMER VIEWS
 @api_view(['GET', 'POST'])
